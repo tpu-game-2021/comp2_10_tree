@@ -47,12 +47,32 @@ static node* generate(int key, const char* value)
 	if (p == NULL) return NULL;
 
 	p->key = key;
-	int n = (int)strlen(value);
-	memcpy(p->value, value, strlen(value)+1);
+	memcpy(p->value, value, (int)strlen(value) + 1);
 
 	p->left = p->right = NULL;
 
 	return p;
+}
+
+static bool insert( node* p, int key, const char* value)
+{
+	if (key < p->key) {
+		if (p->left == NULL) {
+			p->left = generate(key, value);
+			return (p->left != NULL);
+		}
+		return insert(p->left, key, value);
+	}
+	else if (p->key < key) {
+		if (p->right == NULL) {
+			p->right = generate(key, value);
+			return (p->right != NULL);
+		}
+		return insert(p->right, key, value);
+	}
+
+	strcpy_s(p->value, 256, value);
+	return true;
 }
 
 // keyの値を見てノードを追加する
@@ -60,28 +80,59 @@ bool add(tree* t, int key, const char* value)
 {
 	if (t == NULL) return false;
 
-	node* p = generate(key, value);
-	if (p == NULL) return false;// メモリ確保できなかった。
-
 	if (t->root == NULL) {
-		t->root = p;
-		return true;
+		t->root = generate(key, value);
+		return (t->root != NULL);
 	}
 
-	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
+	return insert(t->root, key, value);
+}
 
-	return true;
+static const char* find(const node* p, int key)
+{
+	if (p == NULL) return NULL;
+
+	if (p->key == key) return p->value;
+
+	if (key < p->key) {
+		return find(p->left, key);
+	}
+	else {
+		return find(p->right, key);
+	}
 }
 
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
-	// ToDo: 実装する
-	return NULL;
+	if (t == NULL) return NULL;
+
+	return find(t->root, key);
 }
+
+static void find(const node* p, void (*func)(const node* p))
+{
+	if (p == NULL) return;
+
+	// 左側を実効
+	if (p->left) {
+		find(p->left, func);
+	}
+
+	// 自分自身を実効
+	func(p);
+
+	// 右側を実効
+	if (p->right) {
+		find(p->right, func);
+	}
+}
+
 
 // keyの小さな順にコールバック関数funcを呼び出す
 void search(const tree* t, void (*func)(const node* p))
 {
-	// ToDo: 実装する
+	if (t == NULL) return;
+
+	find(t->root, func);
 }
