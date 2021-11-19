@@ -125,18 +125,18 @@ const char* find(const tree* t, int key)
 }
 
 // keyの小さな順にコールバック関数funcを呼び出す
+void sear( node* attention, void (*func)(const node* p))
+{
+	if (attention->left) {
+		sear(attention->left, func);
+	}
+	func(attention);
+	if (attention->right) {
+		sear(attention->right, func);
+	}
+}
 void search(const tree* t, void (*func)(const node* p))
 {
 	// ToDo: 実装する
-	tree attention;
-	initialize(&attention);
-	if (t->root->left) {
-		attention.root = t->root->left;
-		search(&attention, func);
-	}
-	func(t->root);
-	if (t->root->right) {
-		attention.root = t->root->right;
-		search(&attention, func);
-	}
+	sear(t->root, func);
 }
