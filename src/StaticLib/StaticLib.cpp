@@ -63,25 +63,124 @@ bool add(tree* t, int key, const char* value)
 	node* p = generate(key, value);
 	if (p == NULL) return false;// メモリ確保できなかった。
 
-	if (t->root == NULL) {
+	if (t->root == NULL) 
+	{
 		t->root = p;
 		return true;
 	}
+	
+	node* attention = t->root;
+	while (1)
+	{
+		if (attention->key == p->key)
+		{
+			memcpy(attention->value, p->value, sizeof(char) * 256);
+			free(p);
+			return true;
+		}
+		else if (attention->key > p->key) 
+		{
+			if (attention->left == NULL) 
+			{
+				attention->left = p;
+				return true;
+			}
+			attention = attention->left;
+		}
+		else {
+			if (attention->right == NULL) 
+			{
+				attention->right = p;
+				return true;
+			}
+			attention = attention->right;
+		}
+	}
+
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
 
 	return true;
+	return false;
 }
 
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
+	if (t->root == NULL)return NULL;
+
+	node* attention = t->root;
+	while (1)
+	{
+		if (attention == NULL) 
+		{
+			return NULL;
+		}
+		else if (attention->key == key) 
+		{
+			return (attention->value);
+		}
+		else if (attention->key > key) 
+		{
+			attention = attention->left;
+		}
+		else 
+		{
+			attention = attention->right;
+		}
+	}
+	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
+
+	return NULL;
+}
+
+// keyの値を見てノードを検索して、値を取得する
+const char* Find(const tree* t, int key)
+{
+	if (t->root == NULL)return NULL; 
+
+	node* attention = t->root;
+	while (1)
+	{
+		if (attention == NULL) 
+		{
+			return NULL;
+		}
+		else if (attention->key == key) 
+		{
+			return (attention->value);
+		}
+		else if (attention->key > key) 
+		{
+			attention = attention->left;
+		}
+		else 
+		{
+			attention = attention->right;
+		}
+	}
+	// ToDo: 実装する
 	return NULL;
 }
 
 // keyの小さな順にコールバック関数funcを呼び出す
+void Find(node* attention, void (*func)(const node* p))
+{
+	if (attention->left)
+	{
+		Find(attention->left, func);
+	}
+		func(attention);
+		if (attention->right)
+		{
+			Find(attention->right, func);
+		}
+	
+	
+		// ToDo: 実装する
+}
 void search(const tree* t, void (*func)(const node* p))
 {
-	// ToDo: 実装する
+	Find(t->root, func);
 }
