@@ -69,19 +69,80 @@ bool add(tree* t, int key, const char* value)
 	}
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
-
-	return true;
+	node* hako = t->root;
+	while (1)
+	{
+		if (p->key < hako->key)  //keyの値がt->rootより小さいとき
+		{
+			if (hako->left == NULL)
+			{
+				p = hako->left;
+				return true;
+			}
+			hako = hako->left;
+		}
+		else if (p->key > hako->key)  ///keyの値がt->rootより大きいとき
+		{
+			if (hako->right == NULL)
+			{
+				hako->right = p;
+				return true;
+			}
+			hako = hako->right;
+		}
+		if (hako->key == p->key)  //keyの値がt->rootと同じとき
+		{
+			memcpy(hako->value, p->value, sizeof(char) * 256);
+			free(p);
+			return true;
+		}
+	}
+	return false;
 }
 
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
+	if (t->root == NULL)
+	{
+		return;
+	}
+	node* hako = t->root;
+	while (1)
+	{
+		if (key < hako->key) 
+		{
+			hako = hako->left;
+		}
+		else if(key > hako->key)
+		{
+			hako = hako->right;
+		}
+		else 
+		{
+			return (hako->value);
+		}
+		if (hako == NULL)
+		{
+			return NULL;
+		}
+	}
 	return NULL;
 }
 
 // keyの小さな順にコールバック関数funcを呼び出す
-void search(const tree* t, void (*func)(const node* p))
+void search(node* hako, void (*func)(const node* p))
 {
 	// ToDo: 実装する
+	
+	if (hako->left) 
+	{
+		search(hako->left, func);
+	}
+	func(hako);
+	if (hako->right)
+	{
+		search(hako->right, func);
+	}
 }
