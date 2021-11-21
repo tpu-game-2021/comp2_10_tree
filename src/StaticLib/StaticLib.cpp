@@ -39,7 +39,6 @@ void finalize(tree* t)
 	t->root = NULL;
 }
 
-//mallocNode(generate):ノードの構造体のメモリを確保し、データを保存
 static node* generate(int key, const char* value)
 {
 	node* p = (node*)malloc(sizeof(node));
@@ -64,7 +63,7 @@ bool add(tree* t, int key, const char* value)
 	if (NODE == NULL) return false;// メモリ確保できなかった。
 
 	if (t->root == NULL) {
-		t->root = generate(key, value);
+		t->root = NODE;
 		return true;
 	}
 	
