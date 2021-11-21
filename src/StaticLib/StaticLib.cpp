@@ -63,8 +63,7 @@ bool myadd(node* p, int key, const char* value)
 	//同値
 	if (p->key == key)
 	{
-		node* x = p;
-		memcpy(x->value, p->value, sizeof(char) * 256);
+		memcpy(p->value, value, sizeof(char) * 256);
 		free(p);
 		return true;
 	}
@@ -73,22 +72,22 @@ bool myadd(node* p, int key, const char* value)
 	if (key < p->key && p->left == NULL)
 	{
 		p->left = generate(key, value);
-		return true;
+		return (p->left != NULL);
 	}
 	if (key < p->key && p->left != NULL)
 	{
-		myadd(p->left, key, value);
+		return myadd(p->left, key, value);
 	}
 	
 	//Rigth再帰
-	if (key < p->key && p->right == NULL)
+	if (key > p->key && p->right == NULL)
 	{
 		p->right = generate(key, value);
-		return true;
+		return (p->right != NULL);
 	}
-	if (key < p->key && p->left != NULL)
+	if (key > p->key && p->right != NULL)
 	{
-		myadd(p->right, key, value);
+		return myadd(p->right, key, value);
 	}
 }
 
@@ -120,7 +119,7 @@ node* myfind(node* p, int key)
 		return NULL;
 	}
 
-	if (key >= p->key && p->right != NULL)
+	if (key > p->key && p->right != NULL)
 	{
 		p->left = myfind(p->right, key);
 	}
@@ -137,15 +136,31 @@ const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
 	if (t == NULL || key == NULL || t->root == NULL)return NULL;
+
+	if (myfind(t->root, key) == NULL)return NULL;
+	if (myfind(t->root, key) != NULL)
+	{
+		return myfind(t->root, key)->value;
+	}
 }
 
-void mysearch()
+void mysearch(node* n, void (*func)(const node* p))
 {
-
+	if (n->left)
+	{
+		mysearch(n->left, func);
+	}
+	func(n);
+	if (n->right)
+	{
+		mysearch(n->left, func);
+	}
 }
 // keyの小さな順にコールバック関数funcを呼び出す
 void search(const tree* t, void (*func)(const node* p))
 {
-
 	// ToDo: 実装する
+	if (t == NULL)return;
+
+	mysearch(t->root, func);
 }
