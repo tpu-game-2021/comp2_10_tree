@@ -45,7 +45,6 @@ namespace UnitTest
 		TEST_METHOD(一要素)
 		{
 			tree t;
-
 			initialize(&t);
 			Assert::IsTrue(add(&t, 0, "Hello world!"));
 			Assert::AreEqual("Hello world!", find(&t, 0), "0のキーの値はHello world!");
