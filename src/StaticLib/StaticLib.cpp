@@ -35,6 +35,8 @@ void finalize(tree* t)
 {
 	if (t == NULL) return;
 
+
+
 	release_recursive(t->root);
 	t->root = NULL;
 }
@@ -77,6 +79,9 @@ bool add(tree* t, int key, const char* value)
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
+
+
+
 	return NULL;
 }
 
@@ -84,4 +89,8 @@ const char* find(const tree* t, int key)
 void search(const tree* t, void (*func)(const node* p))
 {
 	// ToDo: 実装する
+
+
+
+
 }
