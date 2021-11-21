@@ -39,7 +39,7 @@ void finalize(tree* t)
 	t->root = NULL;
 }
 
-
+//mallocNode(generate):ノードの構造体のメモリを確保し、データを保存
 static node* generate(int key, const char* value)
 {
 	node* p = (node*)malloc(sizeof(node));
@@ -48,7 +48,7 @@ static node* generate(int key, const char* value)
 
 	p->key = key;
 	int n = (int)strlen(value);
-	memcpy(p->value, value, strlen(value)+1);
+	memcpy(p->value, value, strlen(value) + 1);
 
 	p->left = p->right = NULL;
 
@@ -60,28 +60,66 @@ bool add(tree* t, int key, const char* value)
 {
 	if (t == NULL) return false;
 
-	node* p = generate(key, value);
-	if (p == NULL) return false;// メモリ確保できなかった。
+	node* NODE = (node*)malloc(sizeof(node));
+	if (NODE == NULL) return false;// メモリ確保できなかった。
 
 	if (t->root == NULL) {
-		t->root = p;
+		t->root = generate(key, value);
 		return true;
 	}
-
+	
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
-
-	return true;
+	while (NODE)
+	{
+		NODE = t->root;
+		if (key == NODE->key) {
+			memcpy(NODE->value, value, sizeof(char) * 256);
+			free(NODE);
+			return true;
+		}
+		else if (key < NODE->key) {
+			if (NODE->left == NULL) {
+				NODE->left = NODE;
+				return true;
+			}
+			NODE = NODE->left;
+		}
+		else {
+			if (NODE->right == NULL) {
+				NODE->right = NODE;
+				return true;
+			}
+			NODE = NODE->right;
+		}
+	}
 }
 
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
-	// ToDo: 実装する
-	return NULL;
+	//////// ToDo: 実装する
+	if (t == NULL) return NULL;
+	node* NODE = t->root;
+	
+	while (NODE)
+	{
+		if (NODE == NULL) return NULL;
+		if (key < NODE->key) NODE = NODE->left;
+		else if (key > NODE->key) NODE = NODE->right;
+		else return (NODE->value);
+	}
+	//return NULL;
 }
 
 // keyの小さな順にコールバック関数funcを呼び出す
+void search_find(node* NODE, void (*func)(const node* p))
+{
+	if(NODE->left)	search_find(NODE->left, func);
+	func(NODE);
+	if(NODE->right)	search_find(NODE->right, func);
+}
+
 void search(const tree* t, void (*func)(const node* p))
 {
-	// ToDo: 実装する
+	search_find(t->root, func);
 }
