@@ -5,7 +5,9 @@
 #include "../include/lib_func.h"
 
 
-// 2分木の初期化
+
+
+// 2分木の初期化　
 void initialize(tree* t)
 {
 	if (t == NULL) return;
@@ -30,7 +32,7 @@ static void release_recursive(node* n)
 	free(n);
 }
 
-// 使用メモリの全解放
+// 使用メモリの全解放　
 void finalize(tree* t)
 {
 	if (t == NULL) return;
@@ -63,21 +65,72 @@ bool add(tree* t, int key, const char* value)
 	node* p = generate(key, value);
 	if (p == NULL) return false;// メモリ確保できなかった。
 
-	if (t->root == NULL) {
+	if (t->root == NULL)
+	{
 		t->root = p;
 		return true;
 	}
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
 
-	return true;
+	//keyの値が小さければレフト大きければライト
+
+
+
+		if (key < p->key)
+		{
+		if (p->left != NULL)
+			add(t, p->key, value);
+		else
+			p->left = p;
+
+		return true;
+
+		}
+		else 
+		{
+			if (p->right != NULL)
+				add(t, p->key, value);
+			else
+				p->right = p;
+
+			return true;
+		}
+		
+
+	
+
+
+
+	
 }
 
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
-	return NULL;
+
+	
+
+	if (t->root->key > key)//小さかったら左
+	{
+		if (t->root->left == NULL);
+		return NULL;
+		
+		return find(t, key);
+
+	}
+	if (t->root->key < key)//大きかったら右
+	{
+		if (t->root->right == NULL);
+		return NULL;
+
+		return find(t, key);
+	}
+
+
+
+	return find(t, key);
 }
 
 // keyの小さな順にコールバック関数funcを呼び出す
