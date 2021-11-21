@@ -69,14 +69,35 @@ bool add(tree* t, int key, const char* value)
 	}
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
-
-	return true;
+	if (t->root->key > key)
+	{
+		t->root->left = p;
+		return true;
+	}
+	else if (t->root->key < key)
+	{
+		t->root->right = p;
+		return true;
+	}
 }
 
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
+	if (t->root->key == key)
+	{
+		return t->root->value;
+	}
+	else if (t->root->key > key)
+	{
+		return find(t->root->left, key);
+	}
+	else
+	{
+		return find(t->root->right, key);
+	}
+
 	return NULL;
 }
 
@@ -84,4 +105,5 @@ const char* find(const tree* t, int key)
 void search(const tree* t, void (*func)(const node* p))
 {
 	// ToDo: 実装する
+
 }
