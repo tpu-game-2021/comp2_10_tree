@@ -39,7 +39,6 @@ void finalize(tree* t)
 	t->root = NULL;
 }
 
-
 static node* generate(int key, const char* value)
 {
 	node* p = (node*)malloc(sizeof(node));
@@ -53,42 +52,6 @@ static node* generate(int key, const char* value)
 	p->left = p->right = NULL;
 
 	return p;
-}
-
-bool myadd(node* p, int key, const char* value)
-{
-	//チェック
-	if (p == NULL || key == NULL || value)return false;
-	
-	//同値
-	if (p->key == key)
-	{
-		memcpy(p->value, value, sizeof(char) * 256);
-		free(p);
-		return true;
-	}
-
-	//Left再帰
-	if (key < p->key && p->left == NULL)
-	{
-		p->left = generate(key, value);
-		return (p->left != NULL);
-	}
-	if (key < p->key && p->left != NULL)
-	{
-		return myadd(p->left, key, value);
-	}
-	
-	//Rigth再帰
-	if (key > p->key && p->right == NULL)
-	{
-		p->right = generate(key, value);
-		return (p->right != NULL);
-	}
-	if (key > p->key && p->right != NULL)
-	{
-		return myadd(p->right, key, value);
-	}
 }
 
 // keyの値を見てノードを追加する
@@ -105,42 +68,74 @@ bool add(tree* t, int key, const char* value)
 	}
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
-	return myadd(t->root, key, value);
-}
-
-node* myfind(node* p, int key)
-{
-	if (key < p->key && p->left != NULL)
+	node* n = t->root;
+	while (1)
 	{
-		p->left = myfind(p->left, key);
+		//同値
+		if (p->key == n->key)
+		{
+			memcpy(n->value, p->value, sizeof(char) * 256);
+			free(p);
+			break;
+		}
+		//left
+		else if (p->key < n->key)
+		{
+			if (n->left == NULL)
+			{
+				n->left = p;
+				break;
+			}
+			else
+			{
+				n = n->left;
+			}
+		}
+		//right
+		else
+		{
+			if (n->right == NULL)
+			{
+				n->right = p;
+				break;
+			}
+			else
+			{
+				n = n->right;
+			}
+		}
 	}
-	if (key < p->key && p->left == NULL)
-	{
-		return NULL;
-	}
-
-	if (key > p->key && p->right != NULL)
-	{
-		p->left = myfind(p->right, key);
-	}
-	if (key < p->key && p->right == NULL)
-	{
-		return NULL;
-	}
-
-	return p;
+	return true;
 }
 
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
 	// ToDo: 実装する
-	if (t == NULL || key == NULL || t->root == NULL)return NULL;
-
-	if (myfind(t->root, key) == NULL)return NULL;
-	if (myfind(t->root, key) != NULL)
+	if (t->root == NULL)return NULL;
+	
+	node* n = t->root;
+	while (1)
 	{
-		return myfind(t->root, key)->value;
+		if (n == NULL)
+		{
+			return NULL;
+		}
+		//同値
+		else if (key == n->key)
+		{
+			return n->value;
+		}
+		//left
+		else if (key < n->key)
+		{
+			n = n->left;
+		}
+		//right
+		else
+		{
+			n = n->right;
+		}
 	}
 }
 
@@ -153,9 +148,10 @@ void mysearch(node* n, void (*func)(const node* p))
 	func(n);
 	if (n->right)
 	{
-		mysearch(n->left, func);
+		mysearch(n->right, func);
 	}
 }
+
 // keyの小さな順にコールバック関数funcを呼び出す
 void search(const tree* t, void (*func)(const node* p))
 {
