@@ -63,16 +63,53 @@ bool add(tree* t, int key, const char* value)
 	node* p = generate(key, value);
 	if (p == NULL) return false;// メモリ確保できなかった。
 
-	if (t->root == NULL) {
+	if (t->root == NULL) 
+	{
 		t->root = p;
 		return true;
 	}
 
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
+	/*
+	//keyがt->rootの中のkeyがkeyより大きい場合
+	if (key < t->root->key)
+	{
+		//右に追加
+		t->root->left = p;
+	}
+	//keyがt->rootの中のkeyがkeyより小さい場合
+	if (key > t->root->key)
+	{
+		//左に追加
+		t->root->right = p;
+	}
+	*/
+	return add_revival(t->root,key, value);
+}
+//再起関数
+bool add_revival(node*p, int key, const char*value)
+{
+	if (p == NULL) return false;
+
+	if (key < p->key && p->left == NULL)
+	{
+		p->left = generate(key, value);
+		return (p->left != NULL);
+
+		return add_revival(p->left, key, value);
+	}
+
+	if (key > p->key && p->right == NULL)
+	{
+		p->right = generate(key, value);
+		return (p->right != NULL);
+		
+		return add_revival(p->right, key, value);
+	}
+	
 
 	return true;
 }
-
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
@@ -83,5 +120,6 @@ const char* find(const tree* t, int key)
 // keyの小さな順にコールバック関数funcを呼び出す
 void search(const tree* t, void (*func)(const node* p))
 {
+	if (t == NULL) return;
 	// ToDo: 実装する
 }
