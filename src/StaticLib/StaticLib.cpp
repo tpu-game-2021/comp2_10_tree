@@ -67,7 +67,38 @@ bool add(tree* t, int key, const char* value)
 		t->root = p;
 		return true;
 	}
+	node* a = t->root;
+	while (a)
+	{
+		if (a->key == p->key)
+		{
+			memcpy(a->value, p->value, sizeof(char) * 256);
+			free(p);
+			return true;
+		}
 
+		else if (a->key > p->key)
+		{
+			if (a->left == NULL)
+			{
+				a->left = p;
+				return true;
+			}
+
+			a = a->left;
+		}
+
+		else if (a->key < p->key)
+		{
+			if (a->right == NULL)
+			{
+				a->right = p;
+				return true;
+			}
+
+			a = a->right;
+		}
+	}
 	// Todo: t->rootの下にkeyの値の大小でleftかrightを切り替えながらpを追加する処理を実装する
 
 	return true;
@@ -76,6 +107,10 @@ bool add(tree* t, int key, const char* value)
 // keyの値を見てノードを検索して、値を取得する
 const char* find(const tree* t, int key)
 {
+	if (t->root == NULL)  return NULL;
+
+	node* a = t->root;
+
 	// ToDo: 実装する
 	return NULL;
 }
